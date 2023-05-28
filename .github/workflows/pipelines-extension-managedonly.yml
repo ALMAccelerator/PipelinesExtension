@@ -41,7 +41,7 @@ jobs:
             managed: true
 
       # Unpack the solution
-      - name: unpack-solution action
+      - name: unpack-managed-solution
         uses: microsoft/powerplatform-actions/unpack-solution@v0
         with:
           solution-file: ${{ github.event.repository.name }}/${{ github.event.inputs.solution_name }}_managed.zip
