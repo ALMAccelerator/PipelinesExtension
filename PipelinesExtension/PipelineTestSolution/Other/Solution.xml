@@ -6,7 +6,7 @@
       <LocalizedName description="Pipeline Test Solution" languagecode="1033" />
     </LocalizedNames>
     <Descriptions />
-    <Version>1.0.0.4</Version>
+    <Version>1.0.0.5</Version>
     <Managed>2</Managed>
     <Publisher>
       <UniqueName>catteam</UniqueName>
@@ -79,6 +79,7 @@
     </Publisher>
     <RootComponents>
       <RootComponent type="1" schemaName="cat_pipeliunetesttable" behavior="0" />
+      <RootComponent type="300" schemaName="cat_pipelinetestapp_d04e5" behavior="0" />
     </RootComponents>
     <MissingDependencies />
   </SolutionManifest>
