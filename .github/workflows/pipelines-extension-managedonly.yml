@@ -58,6 +58,7 @@ jobs:
             $odataQueryForFileName = "deploymentartifacts(${{ github.event.inputs.artifact_id }})?`$select=name"
             Write-Host "odataQueryForFileName=$odataQueryForFileName"
             $requestUrl = "https://$dataverseHost/api/data/v9.2/$odataQueryForFileName"    
+            Write-Host "$requestUrl"
             $reponse = Invoke-RestMethod $requestUrl -Method 'GET' -Headers $headers
             
             $solutionName = $reponse.name
