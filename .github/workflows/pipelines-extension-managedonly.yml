@@ -57,9 +57,9 @@ jobs:
             $headers.Add("Authorization", "Bearer $spnToken")
             $headers.Add("Content-Type", "application/json")
             $odataQueryForFileName = "deploymentartifacts(${{ github.event.inputs.artifact_id }})?`$select=name"
-            Write-Host "odataQueryForFileName=$odataQueryForFileName"
             $requestUrl = "https://$dataverseHost/api/data/v9.2/$odataQueryForFileName"    
-             $reponse = Invoke-RestMethod $requestUrl -Method 'GET' -Headers $headers
+            Write-Host "odataQueryForFileName=$requestUrl"
+            $reponse = Invoke-RestMethod $requestUrl -Method 'GET' -Headers $headers
             
             $solutionName = $reponse.name
             
