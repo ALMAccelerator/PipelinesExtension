@@ -27,11 +27,6 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - name: checkout git branch
-        run: |
-          git init
-          git checkout -b ${{ github.event.inputs.branch_to_create }} ${{ github.event.inputs.source_branch }}
-
       # Export the unmanaged solution
       - name: export-solution action
         uses: microsoft/powerplatform-actions/export-solution@v0
