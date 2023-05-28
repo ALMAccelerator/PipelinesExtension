@@ -1,0 +1,46 @@
+trigger:
+  enabled: false
+stages:
+- stage: __default
+  jobs:
+  - job: Job
+    pool:
+      vmImage: ubuntu-latest
+    steps:
+    - task: PowerPlatformToolInstaller@2
+    - task: PowerPlatformSetConnectionVariables@2
+      name: connectionVariables
+      inputs:
+        authenticationType: 'PowerPlatformSPN'
+        PowerPlatformSPN: 'marcsc-ado-sp'
+    - task: PowerShell@2
+      displayName: 'Init & Download Solution from pipelines for Power Platform'
+      inputs:
+        targetType: inline
+        script: "git config --global user.email \"$(Email)\"\ngit config --global user.name \"$(Username)\"\ngit config --system core.longpaths true\ngit checkout -b main\n\n$aadHost = \"login.microsoftonline.com\"\n$clientId = \"$(connectionVariables.BuildTools.ApplicationId)\"\n$clientSecret = \"$(connectionVariables.BuildTools.ClientSecret)\"\n$tenantId = \"$(connectionVariables.BuildTools.TenantId)\"\n$url = \"$(BuildTools.EnvironmentUrl)\"\n$options = [System.StringSplitOptions]::RemoveEmptyEntries\n$dataverseHost = $url.Split(\"://\", $options)[1].Split(\"/\")[0]\n$body = @{client_id = $clientId; client_secret = $clientSecret; grant_type = \"client_credentials\"; scope = \"https://$dataverseHost/.default\"; }\n$OAuthReq = Invoke-RestMethod -Method Post -Uri \"https://$aadHost/$tenantId/oauth2/v2.0/token\" -Body $body\n$spnToken = $OAuthReq.access_token\n$headers = New-Object \"System.Collections.Generic.Dictionary[[String],[String]]\"\n$headers.Add(\"Authorization\", \"Bearer $spnToken\")\n$headers.Add(\"Content-Type\", \"application/json\")\n$odataQueryForFileName = \"deploymentartifacts($(DeploymentArtifact))?`$select=name\"\nWrite-Host \"odataQueryForFileName=$odataQueryForFileName\"\n$requestUrl = \"https://$dataverseHost/api/data/v9.2/$odataQueryForFileName\"    \n$reponse = Invoke-RestMethod $requestUrl -Method 'GET' -Headers $headers\n$solutionName = $reponse.name\nWrite-Host \"##vso[task.setvariable variable=SolutionName]$solutionName\"\n$odataQueryForFileContents = \"deploymentartifacts($(DeploymentArtifact))/artifactfile/$value\"\n$requestUrl = \"https://$dataverseHost/api/data/v9.2/$odataQueryForFileContents\"\n$response = Invoke-RestMethod $requestUrl -Method 'GET' -Headers $headers\n$response.value | Out-File -FilePath Solution.zip\n$bytes = [Convert]::FromBase64String($response.value)\n[IO.File]::WriteAllBytes(\"Solution.zip\", $bytes)\n"
+        pwsh: true
+    - task: PowerPlatformUnpackSolution@2
+      inputs:
+        SolutionInputFile: 'Solution.zip'
+        SolutionTargetFolder: 'src/$(SolutionName)/src'
+        SolutionType: 'Managed'
+        ProcessCanvasApps: true
+        OverwriteFiles: true
+    - task: PowerShell@2
+      displayName: 'Commit Changes'
+      inputs:
+        targetType: inline
+        script: |
+          del Solution.zip
+          $pacPath = $env:POWERPLATFORMTOOLS_PACCLIPATH + "/pac_linux/tools"
+          $env:PATH = $env:PATH + ":" + $pacPath
+          if(-Not(Test-Path src/$(SolutionName)/*.cdsproj)){
+            cd src/$(SolutionName)
+            pac solution init --publisher-name fake --publisher-prefix fake #fake becaue it will skip everything but creating cdsproj file and gitignore file
+            cd ../..
+          }
+          git add --all
+          git commit -m "nightly build archive"
+          git -c http.extraheader="AUTHORIZATION: bearer $(System.AccessToken)" push origin main
+        pwsh: true
+

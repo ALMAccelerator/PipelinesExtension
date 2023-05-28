@@ -29,14 +29,6 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
-      # Make sure the power platform tools install
-      - name: Who Am I
-        uses: microsoft/powerplatform-actions/who-am-i@latest
-        with:
-          app-id: ${{ secrets.CLIENT_ID }}
-          client-secret: ${{ secrets.POWERPLATFORMSPN }}
-          tenant-id: ${{ secrets.TENANT_ID }}
-          environment-url: ${{ github.event.inputs.environment_url}}
 
       - name: create or checkout git branch
         if: github.event.inputs.branch_to_create != ''
@@ -52,10 +44,6 @@ jobs:
             git init
             git checkout -b ${{ github.event.inputs.branch_to_create }} ${{ github.event.inputs.source_branch }}
           }
-
-      # We need to use pac directly. So we set the path to pac that ships with the Actions
-      #- name: set-pac-path
-      #  uses: ./.github/actions/set-pac-path
 
       # Runs a set of commands using the runners shell
       - name: export-solution action
