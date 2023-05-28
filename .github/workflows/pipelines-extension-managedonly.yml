@@ -39,7 +39,6 @@ jobs:
             PowerPlatformSPN: ${{secrets.PowerPlatformSPN}}
         shell: pwsh
         run: |
-            echo "Downloading solution"
             $aadHost = "login.microsoftonline.com"
             $clientId = "$env:CLIENT_ID"
             $clientSecret = "$env:PowerPlatformSPN"
@@ -66,11 +65,6 @@ jobs:
             $response = Invoke-RestMethod $requestUrl -Method 'GET' -Headers $headers
             $bytes = [Convert]::FromBase64String($response.value)
             [IO.File]::WriteAllBytes("../../${{ github.event.repository.name }}/${{ github.event.inputs.solution_name }}_managed.zip", $bytes)
-            Get-ChildItem ../../ -Recurse | % { $_.FullName }            
-      - name: XDTesting Print Directory Structure
-        uses: FiorelaCiroku/XDTesting-Print-Directory-Structure@v1.0.2
-        with:
-          path: "../../"        
       # Unpack the solution
       - name: unpack-managed-solution
         uses: microsoft/powerplatform-actions/unpack-solution@v0
