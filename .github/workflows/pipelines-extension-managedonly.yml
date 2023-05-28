@@ -70,8 +70,8 @@ jobs:
       - name: unpack-managed-solution
         uses: microsoft/powerplatform-actions/unpack-solution@v0
         with:
-          solution-file: ${{ github.event.inputs.solution_name }}_managed.zip
-          solution-folder: ${{ github.event.repository.name }}
+          solution-file: ../${{ github.event.inputs.solution_name }}_managed.zip
+          solution-folder: ../../${{ github.event.repository.name }}/
           solution-type: 'Managed'
           process-canvas-apps: true
           overwrite-files: true
