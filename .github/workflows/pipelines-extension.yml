@@ -75,7 +75,7 @@ jobs:
       - name: unpack-solution action
         uses: microsoft/powerplatform-actions/unpack-solution@v0
         with:
-          solution-file: ${{ github.event.repository.name }}/${{ github.event.inputs.solution_name }}_unmanaged.zip
+          solution-file: ${{ github.event.repository.name }}/${{ github.event.inputs.solution_name }}.zip
           solution-folder: ${{ github.event.repository.name }}/${{ github.event.inputs.solution_name }}
           solution-type: 'Both'
           process-canvas-apps: true
