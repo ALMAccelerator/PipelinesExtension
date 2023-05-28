@@ -3,6 +3,10 @@ run-name: Getting ${{ github.event.inputs.solution_name }} solution from environ
 on:
   workflow_dispatch:
     inputs:
+      artifact_id:
+        description: "The Dataverse record ID of the Artifact created by the pipelines."
+        required: true
+        default: yourartifactid
       solution_name:
         description: "Name of the Solution in Dataverse environment"
         required: true
@@ -32,15 +36,15 @@ jobs:
         env:
             CLIENT_ID: ${{secrets.CLIENT_ID}}   
             TENANT_ID: ${{secrets.TENANT_ID}}   
-            CLIENT_ID: ${{secrets.CLIENT_ID}}   
+            PowerPlatformSPN: ${{secrets.PowerPlatformSPN}}
         shell: pwsh
         run: |
             $aadHost = "login.microsoftonline.com"
-            $clientId = "$(connectionVariables.BuildTools.ApplicationId)"
-            $clientSecret = "$(connectionVariables.BuildTools.ClientSecret)"
-            $tenantId = "$(connectionVariables.BuildTools.TenantId)"            
+            $clientId = "$env:CLIENT_ID"
+            $clientSecret = "$env:PowerPlatformSPN"
+            $tenantId = "$env:TENANT_ID"
             
-            $url = "$(BuildTools.EnvironmentUrl)"
+            $url = "${{ github.event.inputs.solution_name }}"
             $options = [System.StringSplitOptions]::RemoveEmptyEntries
             $dataverseHost = $url.Split("://", $options)[1].Split("/")[0]
             
