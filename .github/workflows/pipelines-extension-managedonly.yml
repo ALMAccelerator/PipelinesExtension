@@ -44,7 +44,7 @@ jobs:
             $clientSecret = "$env:PowerPlatformSPN"
             $tenantId = "$env:TENANT_ID"
             
-            $url = "${{ github.event.inputs.solution_name }}"
+            $url = "${{ github.event.inputs.environment_url }}"
             $options = [System.StringSplitOptions]::RemoveEmptyEntries
             $dataverseHost = $url.Split("://", $options)[1].Split("/")[0]
             
