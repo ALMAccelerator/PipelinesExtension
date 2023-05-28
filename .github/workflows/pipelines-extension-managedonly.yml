@@ -64,26 +64,14 @@ jobs:
             $odataQueryForFileContents = "deploymentartifacts(${{ github.event.inputs.artifact_id }})/artifactfile/$value"
             $requestUrl = "https://$dataverseHost/api/data/v9.2/$odataQueryForFileContents"
             $response = Invoke-RestMethod $requestUrl -Method 'GET' -Headers $headers
-            echo "zipfile=${{ github.event.repository.name }}\${{ github.event.inputs.solution_name }}_managed.zip"
-            $response.value | Out-File -FilePath "${{ github.event.repository.name }}\${{ github.event.inputs.solution_name }}_managed.zip"
-      # Export the managed solution
-          #- name: export-managed-solution
-      #  uses: microsoft/powerplatform-actions/export-solution@v0
-      #  with:
-      #      environment-url: ${{ github.event.inputs.environment_url}}
-      #      app-id: ${{secrets.CLIENT_ID}}
-      #      client-secret: ${{ secrets.PowerPlatformSPN }}
-      #      tenant-id: ${{secrets.TENANT_ID}}
-      #      solution-name: ${{ github.event.inputs.solution_name }}
-      #      solution-output-file: ${{ github.event.repository.name }}/${{ github.event.inputs.solution_name }}_managed.zip
-      #      overwrite: true
-      #      managed: true
+            echo "zipfile=${{ github.event.repository.name }}/${{ github.event.inputs.solution_name }}_managed.zip"
+            $response.value | Out-File -FilePath "${{ github.event.repository.name }}/${{ github.event.inputs.solution_name }}_managed.zip"
 
       # Unpack the solution
       - name: unpack-managed-solution
         uses: microsoft/powerplatform-actions/unpack-solution@v0
         with:
-          solution-file: ${{ github.event.repository.name }}/${{ github.event.inputs.solution_name }}_managed.zip
+          solution-file: ${{ github.event.inputs.solution_name }}_managed.zip
           solution-folder: ${{ github.event.repository.name }}/
           solution-type: 'Managed'
           process-canvas-apps: true
