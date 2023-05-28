@@ -65,7 +65,7 @@ jobs:
             $requestUrl = "https://$dataverseHost/api/data/v9.2/$odataQueryForFileContents"
             $response = Invoke-RestMethod $requestUrl -Method 'GET' -Headers $headers
             echo "zipfile="${{ github.event.repository.name }}\${{ github.event.inputs.solution_name }}_managed.zip"
-            $response.value | Out-File -FilePath "${{ github.event.repository.name }}\${{ github.event.inputs.solution_name }}_managed.zip"
+            $response.value | Out-File -FilePath "${{ github.event.repository.name }}\\${{ github.event.inputs.solution_name }}_managed.zip"
       # Export the managed solution
           #- name: export-managed-solution
       #  uses: microsoft/powerplatform-actions/export-solution@v0
