@@ -64,9 +64,8 @@ jobs:
             $odataQueryForFileContents = "deploymentartifacts(${{ github.event.inputs.artifact_id }})/artifactfile/$value"
             $requestUrl = "https://$dataverseHost/api/data/v9.2/$odataQueryForFileContents"
             $response = Invoke-RestMethod $requestUrl -Method 'GET' -Headers $headers
-            Write-Host "Writing solution to file ../../${{ github.event.repository.name }}/${{ github.event.inputs.solution_name }}_managed.zip"
-            $response.value | Out-File -FilePath "../../${{ github.event.repository.name }}/${{ github.event.inputs.solution_name }}_managed.zip"
-
+            $bytes = [Convert]::FromBase64String($response.value)
+            [IO.File]::WriteAllBytes("../../${{ github.event.repository.name }}/${{ github.event.inputs.solution_name }}_managed.zip", $bytes)
             Get-ChildItem ../../ -Recurse | % { $_.FullName }            
       - name: XDTesting Print Directory Structure
         uses: FiorelaCiroku/XDTesting-Print-Directory-Structure@v1.0.2
