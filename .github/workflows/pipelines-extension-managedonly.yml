@@ -65,9 +65,7 @@ jobs:
             $odataQueryForFileContents = "deploymentartifacts($(DeploymentArtifact))/artifactfile/$value"
             $requestUrl = "https://$dataverseHost/api/data/v9.2/$odataQueryForFileContents"
             $response = Invoke-RestMethod $requestUrl -Method 'GET' -Headers $headers
-            $response.value | Out-File -FilePath Solution.zip
-            $bytes = [Convert]::FromBase64String($response.value)
-            [IO.File]::WriteAllBytes("${{ github.event.repository.name }}/${{ github.event.inputs.solution_name }}_managed.zip", $bytes)
+            $response.value | Out-File -FilePath "${{ github.event.repository.name }}/${{ github.event.inputs.solution_name }}_managed.zip"
         
       # Export the managed solution
           #- name: export-managed-solution
