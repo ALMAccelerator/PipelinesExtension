@@ -64,6 +64,7 @@ jobs:
             
             $odataQueryForFileContents = "deploymentartifacts(${{ github.event.inputs.artifact_id }})/artifactfile/$value"
             $requestUrl = "https://$dataverseHost/api/data/v9.2/$odataQueryForFileContents"
+            Write-Host "requestUrl=$requestUrl"
             $response = Invoke-RestMethod $requestUrl -Method 'GET' -Headers $headers
             $response.value | Out-File -FilePath "${{ github.event.repository.name }}/${{ github.event.inputs.solution_name }}_managed.zip"
         
