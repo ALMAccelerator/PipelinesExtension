@@ -64,7 +64,6 @@ jobs:
             $odataQueryForFileContents = "deploymentartifacts(${{ github.event.inputs.artifact_id }})/artifactfile/$value"
             $requestUrl = "https://$dataverseHost/api/data/v9.2/$odataQueryForFileContents"
             $response = Invoke-RestMethod $requestUrl -Method 'GET' -Headers $headers
-            echo "zipfile=${{ github.event.repository.name }}/${{ github.event.inputs.solution_name }}_managed.zip"
             $response.value | Out-File -FilePath "${{ github.event.repository.name }}/${{ github.event.inputs.solution_name }}_managed.zip"
 
       # Unpack the solution
@@ -72,7 +71,7 @@ jobs:
         uses: microsoft/powerplatform-actions/unpack-solution@v0
         with:
           solution-file: ${{ github.event.inputs.solution_name }}_managed.zip
-          solution-folder: "/"
+          solution-folder: "${{ github.event.repository.name }}"
           solution-type: 'Managed'
           process-canvas-apps: true
           overwrite-files: true
