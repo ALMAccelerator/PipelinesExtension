@@ -54,7 +54,7 @@ jobs:
             client-secret: ${{ secrets.POWERPLATFORMSPN }}
             tenant-id: ${{secrets.TENANT_ID}}
             solution-name: ${{ github.event.inputs.solution_name }}
-            solution-output-file: ${{ github.event.repository.name }}/${{ github.event.inputs.solution_name }}_unmanaged.zip
+            solution-output-file: ${{ github.event.repository.name }}/${{ github.event.inputs.solution_name }}.zip
             overwrite: true
             run-asynchronously: true
       
