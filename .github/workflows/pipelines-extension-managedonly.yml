@@ -67,10 +67,10 @@ jobs:
             $response = Invoke-RestMethod $requestUrl -Method 'GET' -Headers $headers
             $response.value | Out-File -FilePath Solution.zip
             $bytes = [Convert]::FromBase64String($response.value)
-            [IO.File]::WriteAllBytes("${{ github.event.repository.name }}/${{ github.event.inputs.solution_name }}_managed.zip", $bytes)"
+            [IO.File]::WriteAllBytes("${{ github.event.repository.name }}/${{ github.event.inputs.solution_name }}_managed.zip", $bytes)
         
       # Export the managed solution
-      #- name: export-managed-solution
+          #- name: export-managed-solution
       #  uses: microsoft/powerplatform-actions/export-solution@v0
       #  with:
       #      environment-url: ${{ github.event.inputs.environment_url}}
