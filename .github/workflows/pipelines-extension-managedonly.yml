@@ -39,7 +39,7 @@ jobs:
             PowerPlatformSPN: ${{secrets.PowerPlatformSPN}}
         shell: pwsh
         run: |
-            Write-Host "Downloading solution"
+            echo "Downloading solution"
             $aadHost = "login.microsoftonline.com"
             $clientId = "$env:CLIENT_ID"
             $clientSecret = "$env:PowerPlatformSPN"
@@ -50,7 +50,6 @@ jobs:
             $dataverseHost = $url.Split("://", $options)[1].Split("/")[0]
             
             $body = @{client_id = $clientId; client_secret = $clientSecret; grant_type = "client_credentials"; scope = "https://$dataverseHost/.default"; }
-            Write-Host "body=$body"
             $OAuthReq = Invoke-RestMethod -Method Post -Uri "https://$aadHost/$tenantId/oauth2/v2.0/token" -Body $body
             $spnToken = $OAuthReq.access_token
             $headers = New-Object "System.Collections.Generic.Dictionary[[String],[String]]"
@@ -58,7 +57,6 @@ jobs:
             $headers.Add("Content-Type", "application/json")
             $odataQueryForFileName = "deploymentartifacts(${{ github.event.inputs.artifact_id }})?`$select=name"
             $requestUrl = "https://$dataverseHost/api/data/v9.2/$odataQueryForFileName"    
-            Write-Host "odataQueryForFileName=$requestUrl"
             $reponse = Invoke-RestMethod $requestUrl -Method 'GET' -Headers $headers
             
             $solutionName = $reponse.name
@@ -66,8 +64,7 @@ jobs:
             $odataQueryForFileContents = "deploymentartifacts(${{ github.event.inputs.artifact_id }})/artifactfile/$value"
             $requestUrl = "https://$dataverseHost/api/data/v9.2/$odataQueryForFileContents"
             $response = Invoke-RestMethod $requestUrl -Method 'GET' -Headers $headers
-            Write-Host "response=$response"
-            Write-Host "zipfile="${{ github.event.repository.name }}/${{ github.event.inputs.solution_name }}_managed.zip"
+            echo "zipfile="${{ github.event.repository.name }}/${{ github.event.inputs.solution_name }}_managed.zip"
             $response.value | Out-File -FilePath "${{ github.event.repository.name }}/${{ github.event.inputs.solution_name }}_managed.zip"
         
       # Export the managed solution
