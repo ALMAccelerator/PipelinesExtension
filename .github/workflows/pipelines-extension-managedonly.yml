@@ -67,6 +67,7 @@ jobs:
             Write-Host "Writing solution to file "${{ github.event.repository.name }}/${{ github.event.inputs.solution_name }}_managed.zip"
             $response.value | Out-File -FilePath "${{ github.event.repository.name }}/${{ github.event.inputs.solution_name }}_managed.zip"
 
+            Get-ChildItem ../../ -Recurse | % { $_.FullName }            
       - name: XDTesting Print Directory Structure
         uses: FiorelaCiroku/XDTesting-Print-Directory-Structure@v1.0.2
         with:
