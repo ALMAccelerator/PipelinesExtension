@@ -54,11 +54,7 @@ jobs:
       - name: commit changes
         shell: pwsh
         run: |
-          rm -rf ${{ github.event.repository.name }}/${{ github.event.inputs.solution_name }}.zip
           rm -rf ${{ github.event.repository.name }}/${{ github.event.inputs.solution_name }}_managed.zip
-          git config user.name "GitHub Actions Bot"
-          git config user.email "<>" 
-          git pull 
           git add --all
           git commit -am "${{ github.event.inputs.commit_message }}" --allow-empty
 

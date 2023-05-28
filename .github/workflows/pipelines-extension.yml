@@ -28,7 +28,7 @@ jobs:
       - uses: actions/checkout@v3
 
       # Export the unmanaged solution
-      - name: export-solution action
+      - name: export-unmanaged-solution
         uses: microsoft/powerplatform-actions/export-solution@v0
         with:
             environment-url: ${{ github.event.inputs.environment_url}}
