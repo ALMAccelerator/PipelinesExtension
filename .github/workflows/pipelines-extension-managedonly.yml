@@ -71,7 +71,7 @@ jobs:
       - name: unpack solution
         uses: microsoft/powerplatform-actions/unpack-solution@v0
         with:
-          solution-file: "${{ github.event.inputs.solution_name }}_managed.zip"
+          solution-file: "${{ github.event.inputs.solution_name }}.zip"
           solution-folder: "${{ github.event.repository.name }}"
           solution-type: 'Managed'
           process-canvas-apps: true
@@ -81,7 +81,7 @@ jobs:
       - name: commit changes
         shell: pwsh
         run: |
-          rm -rf ${{ github.event.inputs.solution_name }}_managed.zip
+          rm -rf ${{ github.event.inputs.solution_name }}.zip
           git config user.name "GitHub Actions Bot"
           git config user.email "<>" 
           git pull 
