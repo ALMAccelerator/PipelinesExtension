@@ -36,6 +36,14 @@ jobs:
         with:
             ref: ${{ github.event.inputs.source_branch }}
 
+      # Commit changes to the existing or new branch
+      - name: create new branch if specified
+        shell: pwsh
+        run: |
+            if('${{ github.event.inputs.target_branch }}' -ne '') {
+                git checkout -b ${{ github.event.inputs.target_branch }} ${{ github.event.inputs.source_branch }}
+            }
+
       # Export the managed solution from the artifact created by pipelines
       - name: export-managed-solution-from-artifact
         env:
