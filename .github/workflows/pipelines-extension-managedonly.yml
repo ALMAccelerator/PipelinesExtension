@@ -40,7 +40,7 @@ jobs:
                 git checkout -b ${{ github.event.inputs.target_branch }} ${{ github.event.inputs.source_branch }}
             }
 
-      # Export the managed solution from the artifact created by pipelines
+      # Export the solution from the artifact created by pipelines
       - name: download solution from artifact
         env:
             CLIENT_ID: ${{secrets.CLIENT_ID}}   
