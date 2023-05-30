@@ -41,16 +41,16 @@ jobs:
             }
 
       # Export the managed solution from the artifact created by pipelines
-      - name: download-managed-solution-from-artifact
+      - name: download solution from artifact
         env:
-            CLIENT_ID: ${{secrets.CLIENT_ID}}
-            TENANT_ID: ${{secrets.TENANT_ID}}
-            PowerPlatformSPN: ${{secrets.CLIENT_SECRET}}
+            CLIENT_ID: ${{secrets.CLIENT_ID}}   
+            TENANT_ID: ${{secrets.TENANT_ID}}   
+            CLIENT_SECRET: ${{secrets.CLIENT_SECRET}}
         shell: pwsh
         run: |
             $aadHost = "login.microsoftonline.com"
             $clientId = "$env:CLIENT_ID"
-            $clientSecret = "$env:PowerPlatformSPN"
+            $clientSecret = "$env:CLIENT_SECRET"
             $tenantId = "$env:TENANT_ID"
             
             $url = "${{ github.event.inputs.artifact_url }}"
@@ -68,7 +68,7 @@ jobs:
             $bytes = [Convert]::FromBase64String($response.value)
             [IO.File]::WriteAllBytes("${{ github.event.inputs.solution_name }}_managed.zip", $bytes)
       # Unpack the solution
-      - name: unpack-managed-solution
+      - name: unpack solution
         uses: microsoft/powerplatform-actions/unpack-solution@v0
         with:
           solution-file: "${{ github.event.inputs.solution_name }}_managed.zip"
