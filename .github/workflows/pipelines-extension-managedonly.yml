@@ -53,6 +53,10 @@ jobs:
             $clientSecret = "$env:PowerPlatformSPN"
             $tenantId = "$env:TENANT_ID"
             
+            $url = "${{ github.event.inputs.artifact_url }}"
+            $options = [System.StringSplitOptions]::RemoveEmptyEntries
+            $dataverseHost = $url.Split("://", $options)[1].Split("/")[0]
+
             $body = @{client_id = $clientId; client_secret = $clientSecret; grant_type = "client_credentials"; scope = "https://$dataverseHost/.default"; }
             $OAuthReq = Invoke-RestMethod -Method Post -Uri "https://$aadHost/$tenantId/oauth2/v2.0/token" -Body $body
             $spnToken = $OAuthReq.access_token
