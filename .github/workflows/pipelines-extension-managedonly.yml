@@ -1,4 +1,4 @@
-name: Export, unpack and commit the solution to git
+name: Download, unpack and commit the solution to git
 run-name: Getting ${{ github.event.inputs.solution_name }} solution from environment ${{ github.event.inputs.environment_url }} environment and committing
 on:
   workflow_dispatch:
@@ -41,7 +41,7 @@ jobs:
             }
 
       # Export the managed solution from the artifact created by pipelines
-      - name: export-managed-solution-from-artifact
+      - name: download-managed-solution-from-artifact
         env:
             CLIENT_ID: ${{secrets.CLIENT_ID}}   
             TENANT_ID: ${{secrets.TENANT_ID}}   
@@ -89,7 +89,7 @@ jobs:
           git commit -am "${{ github.event.inputs.commit_message }}" --allow-empty
 
       # Push the committed changes to the source branch
-      - name: push to ${{ github.event.inputs.source_branch }}
+      - name: push to branch
         shell: pwsh
         run: |
           if('${{ github.event.inputs.target_branch }}' -ne '') {
