@@ -64,7 +64,7 @@ jobs:
             $headers.Add("Authorization", "Bearer $spnToken")
             $headers.Add("Content-Type", "application/json")
             
-            $response = Invoke-RestMethod ${{ github.event.inputs.artifact_url }} -Method 'GET' -Headers $headers
+            $response = Invoke-RestMethod "${{ github.event.inputs.artifact_url }}" -Method 'GET' -Headers $headers
             $bytes = [Convert]::FromBase64String($response.value)
             [IO.File]::WriteAllBytes("${{ github.event.inputs.solution_name }}_managed.zip", $bytes)
       # Unpack the solution
