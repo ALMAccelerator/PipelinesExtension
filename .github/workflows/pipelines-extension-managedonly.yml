@@ -101,5 +101,10 @@ jobs:
 
       # Push the committed changes to the source branch
       - name: push to ${{ github.event.inputs.source_branch }}
+        shell: pwsh
         run: |
-          git push origin ${{ github.event.inputs.source_branch }}
+          if('${{ github.event.inputs.target_branch }}' -ne '') {
+              git push origin ${{ github.event.inputs.target_branch }}
+          } else {
+              git push origin ${{ github.event.inputs.source_branch }}
+          }
