@@ -66,7 +66,7 @@ jobs:
             
             $response = Invoke-RestMethod "${{ github.event.inputs.artifact_url }}" -Method 'GET' -Headers $headers
             $bytes = [Convert]::FromBase64String($response.value)
-            [IO.File]::WriteAllBytes("${{ github.event.inputs.solution_name }}_managed.zip", $bytes)
+            [IO.File]::WriteAllBytes("${{ github.event.inputs.solution_name }}.zip", $bytes)
       # Unpack the solution
       - name: unpack solution
         uses: microsoft/powerplatform-actions/unpack-solution@v0
