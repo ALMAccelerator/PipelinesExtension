@@ -43,9 +43,9 @@ jobs:
       # Export the managed solution from the artifact created by pipelines
       - name: download-managed-solution-from-artifact
         env:
-            CLIENT_ID: ${{secrets.CLIENT_ID}}   
-            TENANT_ID: ${{secrets.TENANT_ID}}   
-            PowerPlatformSPN: ${{secrets.PowerPlatformSPN}}
+            CLIENT_ID: ${{secrets.CLIENT_ID}}
+            TENANT_ID: ${{secrets.TENANT_ID}}
+            PowerPlatformSPN: ${{secrets.CLIENT_SECRET}}
         shell: pwsh
         run: |
             $aadHost = "login.microsoftonline.com"
