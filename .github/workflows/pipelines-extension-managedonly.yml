@@ -3,18 +3,14 @@ run-name: Getting ${{ github.event.inputs.solution_name }} solution from environ
 on:
   workflow_dispatch:
     inputs:
-      artifact_id:
-        description: "The Dataverse record ID of the Artifact created by the pipelines."
+      artifact_url:
+        description: "The url of the Dataverse record ID for the artifact created by the pipelines."
         required: true
-        default: yourartifactid
+        default: "https://[your-env].crm.dynamics.com/api/data/v9.0/deploymentartifacts([your-artifact-id])/artifactfile/$value"
       solution_name:
         description: "Name of the Solution in Dataverse environment"
         required: true
-        default: yoursolutionname
-      environment_url:
-        description: Https endpoint of your pipeline host Dataverse environment"
-        required: true
-        default: "https://[your-env].crm.dynamics.com"
+        default: "[your-solution-name]"
       source_branch:
         description: "Branch for the solution commit"
         required: true
@@ -57,25 +53,14 @@ jobs:
             $clientSecret = "$env:PowerPlatformSPN"
             $tenantId = "$env:TENANT_ID"
             
-            $url = "${{ github.event.inputs.environment_url }}"
-            $options = [System.StringSplitOptions]::RemoveEmptyEntries
-            $dataverseHost = $url.Split("://", $options)[1].Split("/")[0]
-            
             $body = @{client_id = $clientId; client_secret = $clientSecret; grant_type = "client_credentials"; scope = "https://$dataverseHost/.default"; }
             $OAuthReq = Invoke-RestMethod -Method Post -Uri "https://$aadHost/$tenantId/oauth2/v2.0/token" -Body $body
             $spnToken = $OAuthReq.access_token
             $headers = New-Object "System.Collections.Generic.Dictionary[[String],[String]]"
             $headers.Add("Authorization", "Bearer $spnToken")
             $headers.Add("Content-Type", "application/json")
-            $odataQueryForFileName = "deploymentartifacts(${{ github.event.inputs.artifact_id }})?`$select=name"
-            $requestUrl = "https://$dataverseHost/api/data/v9.2/$odataQueryForFileName"    
-            $reponse = Invoke-RestMethod $requestUrl -Method 'GET' -Headers $headers
             
-            $solutionName = $reponse.name
-            
-            $odataQueryForFileContents = "deploymentartifacts(${{ github.event.inputs.artifact_id }})/artifactfile/$value"
-            $requestUrl = "https://$dataverseHost/api/data/v9.2/$odataQueryForFileContents"
-            $response = Invoke-RestMethod $requestUrl -Method 'GET' -Headers $headers
+            $response = Invoke-RestMethod ${{ github.event.inputs.artifact_url }} -Method 'GET' -Headers $headers
             $bytes = [Convert]::FromBase64String($response.value)
             [IO.File]::WriteAllBytes("${{ github.event.inputs.solution_name }}_managed.zip", $bytes)
       # Unpack the solution
