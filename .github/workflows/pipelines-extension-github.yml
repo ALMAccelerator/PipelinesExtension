@@ -9,6 +9,12 @@ on:
       solution_name:
         description: "Name of the Solution in Dataverse environment"
         required: true
+      user_name: 
+        description: "User name for the commit"
+        required: true
+      user_email: 
+        description: "User email for the commit"
+        required: true
       source_branch:
         description: "Branch for the solution commit"
         required: true
@@ -83,8 +89,8 @@ jobs:
         shell: pwsh
         run: |
           rm -rf ${{ github.event.inputs.solution_name }}.zip
-          git config user.name "GitHub Actions Bot"
-          git config user.email "<>" 
+          git config user.name ${{ github.event.inputs.user_name }}
+          git config user.email ${{ github.event.inputs.user_email }}
           git pull 
           git add --all
           git commit -am "${{ github.event.inputs.commit_message }}" --allow-empty
