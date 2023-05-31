@@ -1,5 +1,5 @@
 name: Download, unpack and commit the solution to git
-run-name: Getting ${{ github.event.inputs.solution_name }} solution from environment ${{ github.event.inputs.environment_url }} environment and committing
+run-name: Getting ${{ github.event.inputs.solution_name }} from pipelines host environment and committing
 on:
   workflow_dispatch:
     inputs:
@@ -90,7 +90,6 @@ jobs:
         run: |
           rm -rf ${{ github.event.inputs.solution_name }}.zip
           git config user.name ${{ github.event.inputs.user_name }}
-          git config user.email ${{ github.event.inputs.user_email }}
           git pull 
           git add --all
           git commit -am "${{ github.event.inputs.commit_message }}" --allow-empty
