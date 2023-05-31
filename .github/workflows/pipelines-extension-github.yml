@@ -4,17 +4,14 @@ on:
   workflow_dispatch:
     inputs:
       artifact_url:
-        description: "The url of the Dataverse record ID for the artifact created by the pipelines."
+        description: "The url of the Dataverse record ID for the artifact created by the pipelines (Example: https://[your-env].crm.dynamics.com/api/data/v9.0/deploymentartifacts([your-artifact-id])/artifactfile/$value)."
         required: true
-        default: "https://[your-env].crm.dynamics.com/api/data/v9.0/deploymentartifacts([your-artifact-id])/artifactfile/$value"
       solution_name:
         description: "Name of the Solution in Dataverse environment"
         required: true
-        default: "[your-solution-name]"
       source_branch:
         description: "Branch for the solution commit"
         required: true
-        default: main
       target_branch:
         description: "Branch to create for the solution commit"
         required: false
@@ -49,31 +46,35 @@ jobs:
         shell: pwsh
         run: |
             $aadHost = "login.microsoftonline.com"
-            $clientId = "$env:CLIENT_ID"
-            $clientSecret = "$env:CLIENT_SECRET"
-            $tenantId = "$env:TENANT_ID"
-            
             $url = "${{ github.event.inputs.artifact_url }}"
             $options = [System.StringSplitOptions]::RemoveEmptyEntries
             $dataverseHost = $url.Split("://", $options)[1].Split("/")[0]
 
-            $body = @{client_id = $clientId; client_secret = $clientSecret; grant_type = "client_credentials"; scope = "https://$dataverseHost/.default"; }
-            $OAuthReq = Invoke-RestMethod -Method Post -Uri "https://$aadHost/$tenantId/oauth2/v2.0/token" -Body $body
+            $body = @{client_id = $env:CLIENT_ID; client_secret = $env:CLIENT_SECRET; grant_type = "client_credentials"; scope = "https://$dataverseHost/.default"; }
+            $OAuthReq = Invoke-RestMethod -Method Post -Uri "https://$aadHost/$env:TENANT_ID/oauth2/v2.0/token" -Body $body
             $spnToken = $OAuthReq.access_token
             $headers = New-Object "System.Collections.Generic.Dictionary[[String],[String]]"
             $headers.Add("Authorization", "Bearer $spnToken")
             $headers.Add("Content-Type", "application/json")
-            
+
+            # Download the managed solution
             $response = Invoke-RestMethod "${{ github.event.inputs.artifact_url }}" -Method 'GET' -Headers $headers
             $bytes = [Convert]::FromBase64String($response.value)
+            [IO.File]::WriteAllBytes("${{ github.event.inputs.solution_name }}_managed.zip", $bytes)
+
+            # Download the unmanaged solution (for now we will need to use string manipulation to get the unmanaged solution url, until the API provides this value)
+            $unmanaged_artifact_url = "${{ github.event.inputs.artifact_url }}".Replace("artifactfile", "artifactfileunmanaged")
+            $response = Invoke-RestMethod "$unmanaged_artifact_url" -Method 'GET' -Headers $headers
+            $bytes = [Convert]::FromBase64String($response.value)
             [IO.File]::WriteAllBytes("${{ github.event.inputs.solution_name }}.zip", $bytes)
+
       # Unpack the solution
       - name: unpack solution
         uses: microsoft/powerplatform-actions/unpack-solution@v0
         with:
           solution-file: "${{ github.event.inputs.solution_name }}.zip"
           solution-folder: "${{ github.event.repository.name }}"
-          solution-type: 'Managed'
+          solution-type: 'Both'
           process-canvas-apps: true
           overwrite-files: true
 
