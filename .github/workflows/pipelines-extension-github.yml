@@ -12,9 +12,6 @@ on:
       user_name: 
         description: "User name for the commit"
         required: true
-      user_email: 
-        description: "User email for the commit"
-        required: true
       source_branch:
         description: "Branch for the solution commit"
         required: true
